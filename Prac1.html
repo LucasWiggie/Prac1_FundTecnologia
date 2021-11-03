@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <h1> Practica 1 - Fundamentos de Tecnología de Videojuegos</h1>
+</head>
+
+<body>
+    <script>
+
+        // PIEZAS //
+        // Clase Pieza generica
+        class Pieza{
+            constructor(nombre, codigo, fecha){
+                this.nombre = nombre;
+                this.codigo = codigo;
+                this.fecha = fecha;
+            }
+
+            get nombre(){
+                return this.nombre;
+            }
+
+            get codigo(){
+                return this.codigo;
+            }
+
+            get fecha(){
+                return this.fecha;
+            }
+
+            set nombre(nuevoNombre){
+                this.nombre = nuevoNombre;
+            }
+
+            set codigo(nuevoCod){
+                this.codigo = nuevoCod;
+            }
+
+            set fecha(nuevaFecha){
+                this.fecha = nuevaFecha;
+            }
+        }
+
+        // Clase Pieza electrica que hereda de la clase Pieza generica
+        class PiezaElectr extends Pieza{
+            constructor(nombre, codigo, fecha, potencia, voltaje){
+                this.potencia = potencia;
+                this.voltaje = voltaje;
+                super(nombre, codigo, fecha);
+            }
+
+            get potencia(){
+                return this.potencia;
+            }
+
+            get voltaje(){
+                return this.voltaje;
+            }
+
+            set potencia(nuevaPot){
+                this.potencia = nuevaPotencia;
+            }
+
+            set voltaje(nuevoVoltaje){
+                this.voltaje = nuevoVoltaje;
+            }
+        }
+
+        // Clase Pieza mecanica que hereda de la clase Pieza generica
+        class PiezaMec extends Pieza{
+            constructor(nombre, codigo, fecha, material){
+                this.material = material;
+                super(nombre, codigo, fecha);
+            }
+
+            get material(){
+                return this.material;
+            }
+
+            set material(nuevoMat){
+                this.material = nuevoMat;
+            }
+        }
+
+        // Array con los posibles nombres que puede adquirir una pieza electrica
+        var nombPiezasElectr = ["Placa ABS", "Centralita encendido", "Bornes cableado", "Alternador", "Encendido"];
+        // Array con los posibles nombres que puede adquirir una pieza electrica
+        var nombPiezasMec = ["Larguero inferior", "Guardabarros", "Larguero superior", "Subchasis", "Puerta"];
+        // Array con las posibles potencias
+        var potencias = [1, 5, 10, 20];
+        // Array con los posibles voltajes
+        var voltajes = [3.3, 5, 12, 240];
+        // Array con los posibles materiales
+        var materiales = ["Acero", "Titanio", "Carbono"];
+
+        // FABRICA //
+        class Fabrica {
+            fabricar(numPiezas){
+                if(numPiezas == 100){
+                    for(var i = 0; i<100; i++){
+
+                    }
+                } else if (numPiezas == 1000){
+                    for(var i = 0; i<1000; i++){
+
+                    }
+                }
+            }
+        }
+
+        // FACTORIA //
+        class Factoria {
+            constructor(){
+                this.numE = 0; // contador del numero de piezas electricas que va creando la factoria
+                this.numM = 0; // contador del numero de piezas mecanicas que va creando la factoria
+                this.contPiezas = 0; // contador del numero de piezas total que va creando la factoria
+            }
+
+            elegirTipoPieza(){
+                // Generamos un número aleatorio del 1 al 100
+                var n = Math.floor(Math.random() * 100 + 1);
+
+                //Aplicamos las probabilidades de cada tipo de pieza
+                // 30% electricas
+                // 70% mecánicas
+                // Si sale electrica, devolverá 0, si sale mecánica devolverá 1
+
+                if(n <= 70){ // tiene una probabilidad del 70/100 de ser menor que 70 (intervalo [1, 70])
+                    return 1;
+                } else { // tiene una probabilidad del 30/100 de ser mayor que 70 (intervalo (70, 100])
+                    return 0;
+                }
+            }
+
+            elegirNombrePiezaElectr(){
+                var n = Math.floor(Math.random() * 5);
+                return nombPiezasElectr[n];
+            }
+
+            elegirNombrePiezaMec(){
+                var n = Math.floor(Math.random() * 5);
+                return nombPiezasMec[n];
+            }
+
+            generarCodigo(){
+                var cod = Math.floor(Math.random() * (9999999999 - 1000000000 + 1) + 1000000000);
+                return cod;
+            }
+
+            elegirPotencia(){
+                var i = math.florr(Math.random() * 4);
+                return potencias[i];
+            }
+
+            elegirVoltaje(){
+                var i = math.florr(Math.random() * 4);
+                return voltajes[i];
+            }
+
+            elegirMaterial(){
+                var i = Math.floor(Math.random() * 3);
+                return materiales[i];
+            }
+
+            generarPiezaElectr(){
+
+            }
+
+            generarPiezaMec(){
+                
+            }
+
+            generarPieza() {
+                // Math.floor(Math.random() * (max - min)) + min;
+                var n = elegirTipoPieza();
+
+                // 0 -> Pieza electrica
+                // 1 -> Pieza mecanica
+                if(n == 0){
+                    var nombre = elegirNombrePiezaElectr();
+                    var cod = generarCodigo() + "E";
+                    var potencia = elegirPotencia();
+                    var voltaje = elegirVoltaje();
+                    
+                    numE++;
+                } else if (n == 1){
+                    var nombre = elegirNombrePiezaMec();
+                    var cod = generarCodigo() + "M";
+                    var material = elegirMaterial();
+
+                    numM++;
+                }
+            }
+
+        }
+
+        // ESTACION DE TRATAMIENTO //
+        class EstacionTrat {
+            constructor(){
+                this.numE = 0; // contador del numero de piezas electricas que va procesando la estacion
+                this.numM = 0; // contador del numero de piezas mecanicas que va procesando la estacion
+                this.contPiezas = 0; // contador del numero de piezas total que va procesando la estación
+            }
+           
+            procesarPieza(){
+
+            }
+        }
+
+    </script>
+</body>
+
+</html>
