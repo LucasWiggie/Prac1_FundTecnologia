@@ -7,15 +7,27 @@
 </head>
 
 <body>
+    <p> Pulse "Fabricar 100" para simular la fabricación de 100 piezas</p>
+    <p> Pulse "Fabricar 1000" para simular la fabricación de 1000 piezas</p>
+    <p> Resultado de la simulación</p>
+
+    <button onclick="init(100)"> Fabricar 100</button>
+    <button onclick="init(1000)"> Fabricar 1000</button>
+
+    <h3> Resultado: </h3>
+    <p id="resultado1"></p>
+    <p id="resultado2"></p>
+    <p id="resultado3"></p>
     <script>
 
         // PIEZAS //
         // Clase Pieza generica
         class Pieza {
-            constructor(nombre, codigo, fecha) {
+            constructor(nombre, codigo, fecha, procesamiento) {
                 this.nombre = nombre;
                 this.codigo = codigo;
                 this.fecha = fecha;
+                this.procesamiento = procesamiento;
             }
 
             get nombre() {
@@ -45,10 +57,10 @@
 
         // Clase Pieza electrica que hereda de la clase Pieza generica
         class PiezaElectr extends Pieza {
-            constructor(nombre, codigo, fecha, potencia, voltaje) {
+            constructor(nombre, codigo, fecha, procesamiento, potencia, voltaje) {
+                super(nombre, codigo, fecha, procesamiento);
                 this.potencia = potencia;
                 this.voltaje = voltaje;
-                super(nombre, codigo, fecha);
             }
 
             get potencia() {
@@ -70,9 +82,9 @@
 
         // Clase Pieza mecanica que hereda de la clase Pieza generica
         class PiezaMec extends Pieza {
-            constructor(nombre, codigo, fecha, material) {
+            constructor(nombre, codigo, fecha, procesamiento, material) {
+                super(nombre, codigo, fecha, procesamiento);
                 this.material = material;
-                super(nombre, codigo, fecha);
             }
 
             get material() {
@@ -99,13 +111,25 @@
         class Fabrica {
             fabricar(numPiezas) {
                 if (numPiezas == 100) {
+                    var factoria = new Factoria();
+                    var estacion = new EstacionTrat();
+                    var piezas = [100];
+
                     for (var i = 0; i < 100; i++) {
-
+                        piezas[i] = estacion.procesarPieza(factoria.generarPieza());
                     }
+
+                    mostrarResultado(100, factoria.numE, factoria.numM, estacion.numBarnizNormal, estacion.numBarnizEspecial, estacion.numGalvanizadas, estacion.numPintadas, estacion.numPulidas);
                 } else if (numPiezas == 1000) {
-                    for (var i = 0; i < 1000; i++) {
+                    var factoria = new Factoria();
+                    var estacion = new EstacionTrat();
+                    var piezas = [1000];
 
+                    for (var i = 0; i < 1000; i++) {
+                        piezas[i] = estacion.procesarPieza(factoria.generarPieza());
                     }
+
+                    mostrarResultado(1000, factoria.numE, factoria.numM, estacion.numBarnizNormal, estacion.numBarnizEspecial, estacion.numGalvanizadas, estacion.numPintadas, estacion.numPulidas);
                 }
             }
         }
@@ -153,7 +177,7 @@
                 var cod = [];
                 for (var i = 0; i < 10; i++) {
                     // Para cada posicion, generamos un numero aleatorio
-                    var n = Math.floor(Math.random()*10)
+                    var n = Math.floor(Math.random() * 10)
                     cod[i] = n;
                 }
                 return cod;
@@ -167,7 +191,7 @@
 
             elegirVoltaje() {
                 // Elegimos aleatoriamente el voltaje de la pieza a generar utilizando el array que contiene todos los posibles voltajes
-                var i = math.florr(Math.random() * 4);
+                var i = Math.floor(Math.random() * 4);
                 return voltajes[i];
             }
 
@@ -179,40 +203,40 @@
 
             generarPiezaElectr() {
                 // Encapsulamos todo el proceso de creación de la pieza, incluyendo la generación de sus atributos, en este metodo, que devolvera la pieza ya creada
-                var nombre = elegirNombrePiezaElectr();
-                var cod = generarCodigo();
+                var nombre = this.elegirNombrePiezaElectr();
+                var cod = this.generarCodigo();
                 cod[10] = "E";
                 var fecha = new Date();
-                var potencia = elegirPotencia();
-                var voltaje = elegirVoltaje();
+                var potencia = this.elegirPotencia();
+                var voltaje = this.elegirVoltaje();
 
-                var p = new PiezaElectr(nombre, cod, fecha, potencia, voltaje);
+                var p = new PiezaElectr(nombre, cod, fecha, "", potencia, voltaje);
                 return p;
             }
 
             generarPiezaMec() {
                 // Encapsulamos todo el proceso de creación de la pieza, incluyendo la generación de sus atributos, en este metodo, que devolvera la pieza ya creada
-                var nombre = elegirNombrePiezaMec();
-                var cod = generarCodigo();
+                var nombre = this.elegirNombrePiezaMec();
+                var cod = this.generarCodigo();
                 cod[10] = "M";
                 var fecha = new Date();
-                var material = elegirMaterial();
+                var material = this.elegirMaterial();
 
-                var p = new PiezaMec(nombre, cod, fecha, material);
+                var p = new PiezaMec(nombre, cod, fecha, "", material);
                 return p;
             }
 
             generarPieza() {
                 // Elegimos el tipo de pieza a crear, utilizando el metodo que selecciona el tipo siguiendo los porcentajes
-                var n = elegirTipoPieza();
+                var n = this.elegirTipoPieza();
 
                 // 0 -> Pieza electrica
                 // 1 -> Pieza mecanica
                 if (n == 0) {
-                    p = generarPiezaElectr(); // se genera la pieza
+                    p = this.generarPiezaElectr(); // se genera la pieza
                     numE++; // la factoría apunta la pieza creada en el contador de piezas electricas
                 } else if (n == 1) {
-                    p = generarPiezaMec();
+                    p = this.generarPiezaMec();
                     numM++; // la factoría apunta la pieza creada en el contador de piezas mecanicas
                 }
 
@@ -225,8 +249,11 @@
         // ESTACION DE TRATAMIENTO //
         class EstacionTrat {
             constructor() {
-                this.numE = 0; // contador del numero de piezas electricas que va procesando la estacion
-                this.numM = 0; // contador del numero de piezas mecanicas que va procesando la estacion
+                this.numBarnizNormal = 0; // contador del numero de piezas a las que se le ha aplicado un barniz normal
+                this.numBarnizEspecial = 0; // contador del numero de piezas a las que se le ha aplicado un barniz especial
+                this.numGalvanizadas = 0; // contador del numero de piezas que han sido galvanizadas
+                this.numPulidas = 0; // contador del numero de piezas que han sido pulidas
+                this.numPintadas = 0; // contador del numero de piezas que han sido pintadas
                 this.contPiezas = 0; // contador del numero de piezas total que va procesando la estación
             }
 
@@ -236,23 +263,50 @@
 
                 // Para saber si es pieza electrica o mecnaica, comprobamos la ultima posicion del array, que contiene la letra que diferencia si es electrica o mecanica
                 if (arrayAux[10] == "E") { // es electrica
-                    if(p.potencia == 1 || p.potencia == 5){
+                    if (p.potencia == 1 || p.potencia == 5) {
                         // Se barniza con barniz normal
-
+                        p.procesamiento = "Barnizada normal";
+                        numBarnizNormal++;
                     } else {
                         // Se barniza con barniz especial
-
+                        p.procesamiento = "Barnizada especial";
+                        numBarnizEspecial++;
                     }
-                } else if(arrayAux[10] == "M"){ // es mecanica
-                    if((p.material).localeCompare("Acero") == 0){
+                } else if (arrayAux[10] == "M") { // es mecanica
+                    if (p.material == "Acero") {
                         // Se galvanizan
-                    } else if ((p.material).localeCompare("Titanio") == 0){
+                        p.procesamiento = "Galvanizada";
+                        numGalvanizadas++;
+                    } else if (p.material == "Titanio") {
                         // Se pulen
+                        p.procesamiento = "Pulida";
+                        numPulidas++;
                     } else {
                         // Se pintan
+                        p.procesamiento = "Pintada";
+                        numPintadas++;
                     }
                 }
+
+                contPiezas++;
             }
+        }
+
+        // FUNCION PARA CREAR LA FABRICA E INICIAR EL PROCESO DE CREACION //
+        function init(npiezas) {
+            var fabrica = new Fabrica();
+            fabrica.fabricar(npiezas);
+        }
+
+        // FUNCION PARA MOSTRAR EL RESULTADO //
+        function mostrarResultado(numTotalPiezas, numElectricas, numMecanicas, numBarnizNormal, numBarnizEspecial, numGalvanizado, numPintado, numPulido) {
+            var p1 = document.getElementById("resultado1");
+            var p2 = document.getElementById("resultado2");
+            var p3 = document.getElementById("resultado3");
+
+            p1.innerHTML = "La factoría ha fabricado" + numTotalPiezas + " piezas, de las cuales" + numElectricas + " son de tipo eléctrico y " + numMecanicas + " son de tipo mecánico";
+            p2.innerHTML = "De las eléctricas, la estación de tratamiento ha aplicado barniz normal a " + numBarnizNormal + " y ha aplicado barniz especial a " + numBarnizEspecial;
+            p3.innerHTML = "De las mecánicas ha galvanizado " + numGalvanizado + ", ha pintado " + numPintado + " y ha pulido " + numPulido;
         }
 
     </script>
